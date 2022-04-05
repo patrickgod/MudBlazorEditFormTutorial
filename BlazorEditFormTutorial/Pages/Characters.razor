@@ -1,0 +1,81 @@
+﻿@page "/characters"
+
+<h3>Characters</h3>
+
+<MudTable Items="characters" Hover="true" Striped="true" Dense="true" Class="mb-2">
+    <HeaderContent>
+        <MudTh></MudTh>
+        <MudTh>Id</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Image"><MudAvatar Image="@context.Image" /></MudTd>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Edit">
+            <MudIconButton OnClick="(() => EditCharacter(context.Id))"
+                           Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"></MudIconButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudButton @onclick="CreateCharacter">Create New Character</MudButton>
+
+<hr />
+
+<EditForm Model="character" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardContent>
+            <MudNumericField Label="Id" @bind-Value="character.Id"
+                             For="@(() => character.Id)"
+                             HelperText="Minimum value is 1."></MudNumericField>
+            <MudTextField Label="Name" @bind-Value="character.Name"
+                          For="@(() => character.Name)"></MudTextField>
+            <MudTextField Label="Bio" @bind-Value="character.Bio"
+                          Lines="2"></MudTextField>
+            <MudDatePicker Label="Birth Date" @bind-Date="character.BirthDate"></MudDatePicker>
+            <MudRadioGroup Class="my-4" @bind-SelectedOption="character.TeamId">
+                @foreach (var team in teams)
+                {
+                    <MudRadio Option="team.Id" Color="Color.Primary" Size="Size.Small">@team.Name</MudRadio>
+                }
+            </MudRadioGroup>
+            <MudSelect Label="Difficulty" @bind-Value="character.DifficultyId">
+                @foreach (var difficulty in difficulties)
+                {
+                    <MudSelectItem Value="difficulty.Id">@difficulty.Title</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSwitch Label="Ready to Fight" @bind-Checked="@character.IsReadyToFight"
+                       Color="Color.Primary"></MudSwitch>
+            <br />
+            <InputFile id="fileInput" OnChange="OnFileChange" hidden />
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Filled.CloudUpload"
+                       for="fileInput">
+                Upload Image
+            </MudButton>
+            <br />
+            <MudImage Src="@character.Image" Elevation="25" Class="rounded my-2"></MudImage>
+        </MudCardContent>
+    </MudCard>
+    <MudButton ButtonType="ButtonType.Submit" Class="mr-4 mt-4">
+        @(isNew ? "Create Character" : "Update Character")
+    </MudButton>
+    @if (!isNew)
+    {
+        <MudButton @onclick="DeleteCharacter" Class="mt-4">Delete Character</MudButton>
+    }
+</EditForm>
+
+
+<p style="height:500px;"></p>
+
+
+
